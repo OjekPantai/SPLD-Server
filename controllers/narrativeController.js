@@ -73,6 +73,41 @@ exports.createNarrative = async (req, res) => {
   }
 };
 
+exports.getNarrativeById = async (req, res) => {
+  try {
+    const narrative = await Narrative.findByPk(req.params.id, {
+      include: [
+        {
+          model: User,
+          attributes: [
+            "id",
+            "name",
+            "email",
+            "role",
+            "policeSectorId",
+            "createdAt",
+            "updatedAt",
+          ],
+        },
+        {
+          model: Report,
+        },
+        {
+          model: Media,
+        },
+      ],
+    });
+
+    if (!narrative) {
+      return sendResponse(res, 404, "Narrative not found");
+    }
+
+    sendResponse(res, 200, "Narrative retrieved", narrative);
+  } catch (error) {
+    sendResponse(res, 500, error.message);
+  }
+};
+
 exports.publishNarrative = async (req, res) => {
   try {
     const narrative = await Narrative.findByPk(req.params.id);
