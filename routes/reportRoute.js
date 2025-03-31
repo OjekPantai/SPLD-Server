@@ -9,7 +9,7 @@ const {
   getReportById,
   submitReport,
 } = require("../controllers/reportController");
-const upload = require("../utils/upload");
+const upload = require("../utils/media");
 
 router.post("/", auth, role(["polsek"]), upload.array("media"), createReport);
 router.get("/", auth, getAllReports);

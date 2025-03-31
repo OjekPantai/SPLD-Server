@@ -7,7 +7,7 @@ const reportRoute = require("./routes/reportRoute");
 const narrativeRoute = require("./routes/narrativeRoute");
 const userRoute = require("./routes/userRoute");
 const policeSectorRoute = require("./routes/policeSectorRoute");
-
+const mediaRoutes = require("./routes/mediaRoute");
 const app = express();
 
 app.use(
@@ -26,6 +26,8 @@ app.use("/api/reports", reportRoute);
 app.use("/api/narratives", narrativeRoute);
 app.use("/api/users", userRoute);
 app.use("/api/police-sector", policeSectorRoute);
+
+app.use("/media", mediaRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -1,5 +1,38 @@
 const { Narrative, Media, Report, User, PoliceSector } = require("../models");
 const { sendResponse } = require("../utils/response");
+const path = require("path");
+const fs = require("fs");
+
+exports.getAllNarratives = async (req, res) => {
+  try {
+    const narratives = await Narrative.findAll({
+      include: [
+        {
+          model: User,
+          attributes: [
+            "id",
+            "name",
+            "email",
+            "role",
+            "policeSectorId",
+            "createdAt",
+            "updatedAt",
+          ],
+        },
+        {
+          model: Report,
+        },
+        {
+          model: Media,
+        },
+      ],
+    });
+
+    sendResponse(res, 200, "Narratives retrieved", narratives);
+  } catch (error) {
+    sendResponse(res, 500, error.message);
+  }
+};
 
 exports.createNarrative = async (req, res) => {
   try {
@@ -87,6 +120,41 @@ exports.getPublicNarratives = async (req, res) => {
     });
 
     sendResponse(res, 200, "Public narratives retrieved", narratives);
+  } catch (error) {
+    sendResponse(res, 500, error.message);
+  }
+};
+
+exports.deleteNarrative = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const narrative = await Narrative.findByPk(id, {
+      include: [Media],
+    });
+
+    if (!narrative) {
+      return sendResponse(res, 404, "Narrative not found");
+    }
+
+    for (const media of narrative.Media) {
+      const filePath = path.join(__dirname, "..", media.filePath);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    // Hapus semua media yang terkait dengan narrative
+    await Media.destroy({ where: { narrativeId: id } });
+
+    // Hapus narrative
+    await Narrative.destroy({ where: { id } });
+
+    sendResponse(
+      res,
+      200,
+      "Narrative and associated media deleted successfully"
+    );
   } catch (error) {
     sendResponse(res, 500, error.message);
   }
