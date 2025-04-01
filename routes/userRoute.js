@@ -8,11 +8,9 @@ const {
   createUser,
   updateUser,
   deleteUser,
-  getCurrentUser,
 } = require("../controllers/userController");
 
 router.get("/", auth, role(["admin"]), getAllUsers);
-router.get("/me", auth, getCurrentUser);
 router.get("/:id", auth, role(["admin"]), getUserById);
 router.post("/", auth, role(["admin"]), createUser);
 router.put("/:id", auth, role(["admin"]), updateUser);

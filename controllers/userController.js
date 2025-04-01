@@ -118,25 +118,3 @@ exports.deleteUser = async (req, res) => {
     sendResponse(res, 500, error.message);
   }
 };
-
-exports.getCurrentUser = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: { exclude: ["password"] },
-      include: [
-        {
-          model: PoliceSector,
-          attributes: ["id", "name"],
-        },
-      ],
-    });
-
-    if (!user) {
-      return sendResponse(res, 404, "User not found");
-    }
-
-    sendResponse(res, 200, "Current user retrieved", user);
-  } catch (error) {
-    sendResponse(res, 500, error.message);
-  }
-};

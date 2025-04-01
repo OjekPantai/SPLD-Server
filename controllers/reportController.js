@@ -1,4 +1,4 @@
-const { Report, Media } = require("../models");
+const { Report, Media, User } = require("../models");
 const { sendResponse } = require("../utils/response");
 
 exports.createReport = async (req, res) => {
@@ -51,9 +51,29 @@ exports.getAllReports = async (req, res) => {
   try {
     const reports = await Report.findAll({
       where: req.user.role === "polsek" ? { userId: req.user.id } : {},
-      include: ["User", "Media"],
+      include: [
+        {
+          model: Media,
+        },
+        {
+          model: User,
+          attributes: ["id", "name", "email", "role", "policeSectorId"],
+        },
+      ],
     });
     sendResponse(res, 200, "Reports retrieved", reports);
+  } catch (error) {
+    sendResponse(res, 500, error.message);
+  }
+};
+
+exports.getReportById = async (req, res) => {
+  try {
+    const report = await Report.findByPk(req.params.id, {
+      include: ["User", "Media"],
+    });
+    if (!report) return sendResponse(res, 404, "Report not found");
+    sendResponse(res, 200, "Report retrieved", report);
   } catch (error) {
     sendResponse(res, 500, error.message);
   }

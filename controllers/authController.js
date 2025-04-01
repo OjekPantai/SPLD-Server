@@ -3,6 +3,13 @@ const jwt = require("jsonwebtoken");
 const { User, PoliceSector } = require("../models");
 const { sendResponse } = require("../utils/response");
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000,
+};
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -22,12 +29,7 @@ exports.login = async (req, res) => {
     );
 
     // Set cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.JWT_COOKIE_SECURE === "true",
-      maxAge: process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000,
-      sameSite: "Strict",
-    });
+    res.cookie("token", token, cookieOptions);
 
     sendResponse(res, 200, "Login successful", { user });
   } catch (error) {
@@ -37,10 +39,40 @@ exports.login = async (req, res) => {
 
 exports.logout = (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    ...cookieOptions,
     sameSite: "Lax",
   });
 
   sendResponse(res, 200, "Logout successful");
+};
+
+exports.getMe = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return sendResponse(res, 401, "Not authenticated");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findByPk(decoded.id, {
+      attributes: { exclude: ["password"] }, // Exclude password
+      include: PoliceSector,
+    });
+
+    if (!user) {
+      return sendResponse(res, 401, "User not found");
+    }
+
+    sendResponse(res, 200, "User data retrieved", { user });
+  } catch (error) {
+    if (error instanceof jwt.JsonWebTokenError) {
+      return sendResponse(res, 401, "Invalid token");
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      return sendResponse(res, 401, "Token expired");
+    }
+    sendResponse(res, 500, error.message);
+  }
 };
