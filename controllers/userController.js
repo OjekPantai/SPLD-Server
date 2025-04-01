@@ -118,3 +118,8 @@ exports.deleteUser = async (req, res) => {
     sendResponse(res, 500, error.message);
   }
 };
+
+// Find deleted user
+// const users = await User.findAll({
+//   paranoid: false // Include soft-deleted records
+// });
