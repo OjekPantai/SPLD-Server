@@ -39,6 +39,7 @@ exports.createNarrative = async (req, res) => {
     const { title, content, reportId } = req.body;
 
     const report = await Report.findByPk(reportId);
+
     if (!report || report.status !== "submitted") {
       return sendResponse(
         res,
