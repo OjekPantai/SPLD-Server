@@ -11,9 +11,15 @@ const {
 } = require("../controllers/reportController");
 const upload = require("../utils/media");
 
-router.post("/", auth, role(["polsek"]), upload.array("files"), createReport);
+router.post(
+  "/",
+  auth,
+  role(["polsek", "admin"]),
+  upload.array("files"),
+  createReport
+);
 router.get("/", auth, getAllReports);
 router.get("/:id", auth, getReportById);
-router.put("/:id/submit", auth, role(["polsek"]), submitReport);
+router.put("/:id/submit", auth, role(["polsek", "admin"]), submitReport);
 
 module.exports = router;
