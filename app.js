@@ -8,6 +8,7 @@ const narrativeRoute = require("./routes/narrativeRoute");
 const userRoute = require("./routes/userRoute");
 const policeSectorRoute = require("./routes/policeSectorRoute");
 const mediaRoutes = require("./routes/mediaRoute");
+const morgan = require("morgan");
 const app = express();
 
 app.use(
@@ -20,6 +21,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan("dev"));
 
 app.use("/api/auth", authRoute);
 app.use("/api/reports", reportRoute);

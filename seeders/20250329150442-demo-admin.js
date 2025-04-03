@@ -3,16 +3,14 @@ const bcrypt = require("bcryptjs");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // 1. Cek tabel dengan nama yang sesuai migration
     const [policeSector] = await queryInterface.sequelize.query(
-      `SELECT id FROM PoliceSectors WHERE name = 'Admin Sector' LIMIT 1`,
+      `SELECT id FROM "PoliceSectors" WHERE name = 'Admin Sector' LIMIT 1`,
       { type: Sequelize.QueryTypes.SELECT }
     );
 
     let sectorId;
 
     if (!policeSector) {
-      // 2. Insert tanpa returning (untuk MySQL/MariaDB)
       await queryInterface.bulkInsert("PoliceSectors", [
         {
           name: "Admin Sector",
@@ -21,11 +19,12 @@ module.exports = {
         },
       ]);
 
-      // 3. Dapatkan ID terakhir
-      const [[{ id }]] = await queryInterface.sequelize.query(
-        "SELECT LAST_INSERT_ID() as id"
+      // 3. Dapatkan ID yang baru dibuat (PostgreSQL menggunakan RETURNING)
+      const [newSector] = await queryInterface.sequelize.query(
+        `SELECT id FROM "PoliceSectors" WHERE name = 'Admin Sector' LIMIT 1`,
+        { type: Sequelize.QueryTypes.SELECT }
       );
-      sectorId = id;
+      sectorId = newSector.id;
     } else {
       sectorId = policeSector.id;
     }

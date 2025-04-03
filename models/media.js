@@ -5,7 +5,11 @@ module.exports = (sequelize, DataTypes) => {
   class Media extends Model {
     static associate(models) {
       this.belongsTo(models.Report, { foreignKey: "reportId" });
-      this.belongsTo(models.Narrative, { foreignKey: "narrativeId" });
+      this.belongsTo(models.Narrative, {
+        foreignKey: "narrativeId",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
 
@@ -31,13 +35,15 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: "narratives",
           key: "id",
+          onDelete: "CASCADE",
+          onUpdate: "CASCADE",
         },
       },
     },
     {
       sequelize,
       modelName: "Media",
-      tableName: "media",
+      tableName: "Media",
     }
   );
 

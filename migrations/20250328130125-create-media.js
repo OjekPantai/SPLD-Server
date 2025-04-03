@@ -28,6 +28,8 @@ module.exports = {
           model: "Narratives",
           key: "id",
         },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
