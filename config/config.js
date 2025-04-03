@@ -4,32 +4,35 @@ module.exports = {
   development: {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
-    ssl: true,
     database: process.env.DB_NAME_DEV,
     host: process.env.DB_HOST,
     dialect: "postgres",
-    logging: console.log,
-  },
-  test: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    ssl: true,
-    database: process.env.DB_NAME_TEST,
-    host: process.env.DB_HOST,
-    dialect: "postgres",
+    logging: console.log, // Bisa dipertahankan untuk development
+    dialectOptions: {
+      ssl:
+        process.env.DB_SSL === "true"
+          ? {
+              require: true,
+              rejectUnauthorized: false,
+            }
+          : false,
+    },
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME_PROD,
-    ssl: true,
-    host: process.env.DB_HOST,
+    use_env_variable: "DATABASE_URL",
     dialect: "postgres",
+    logging: false,
     dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: false,
       },
+    },
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
     },
   },
 };
