@@ -10,6 +10,7 @@ const policeSectorRoute = require("./routes/policeSectorRoute");
 const mediaRoutes = require("./routes/mediaRoute");
 const morgan = require("morgan");
 const app = express();
+const helmet = require("helmet");
 
 app.use(
   cors({
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(helmet());
 
 app.use("/api/auth", authRoute);
 app.use("/api/reports", reportRoute);
