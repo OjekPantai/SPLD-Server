@@ -7,7 +7,7 @@ module.exports = {
     database: process.env.DB_NAME_DEV,
     host: process.env.DB_HOST,
     dialect: "postgres",
-    logging: console.log, // Bisa dipertahankan untuk development
+    logging: console.log,
     dialectOptions: {
       ssl:
         process.env.DB_SSL === "true"
