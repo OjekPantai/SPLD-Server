@@ -11,7 +11,7 @@ const {
 
 router.get("/", auth, getAllPoliceSectors);
 router.post("/", auth, role(["admin"]), createPoliceSector);
-// router.put("/:id", auth, role(["admin"]), updatePoliceSector);
-// router.delete("/:id", auth, role(["admin"]), deletePoliceSector);
+router.put("/:id", auth, role(["admin"]), updatePoliceSector);
+router.delete("/:id", auth, role(["admin"]), deletePoliceSector);
 
 module.exports = router;
