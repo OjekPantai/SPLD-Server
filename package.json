@@ -1,17 +1,19 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "api/index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node api/index.js",
-    "build": "echo 'Build script' && npm install",
-    "dev": "nodemon api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "sequelize-cli db:migrate",
-    "seed": "sequelize-cli db:seed:all"
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed:all"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "@vercel/node": "^4.2.6",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -29,8 +31,5 @@
   "devDependencies": {
     "nodemon": "^3.1.9",
     "sequelize-cli": "^6.6.2"
-  },
-  "engines": {
-    "node": ">=18.x"
   }
 }

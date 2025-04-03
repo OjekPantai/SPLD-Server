@@ -2,12 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-const authRoute = require("../routes/authRoute");
-const reportRoute = require("../routes/reportRoute");
-const narrativeRoute = require("../routes/narrativeRoute");
-const userRoute = require("../routes/userRoute");
-const policeSectorRoute = require("../routes/policeSectorRoute");
-const mediaRoutes = require("../routes/mediaRoute");
+const authRoute = require("./routes/authRoute");
+const reportRoute = require("./routes/reportRoute");
+const narrativeRoute = require("./routes/narrativeRoute");
+const userRoute = require("./routes/userRoute");
+const policeSectorRoute = require("./routes/policeSectorRoute");
+const mediaRoutes = require("./routes/mediaRoute");
+
 const morgan = require("morgan");
 const app = express();
 const helmet = require("helmet");
