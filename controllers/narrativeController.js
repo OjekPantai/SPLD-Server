@@ -137,7 +137,7 @@ exports.getPublicNarratives = async (req, res) => {
         },
         {
           model: Report,
-          attributes: ["id", "title"],
+          attributes: ["id"],
           include: [
             {
               model: User,
