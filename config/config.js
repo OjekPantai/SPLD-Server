@@ -8,6 +8,7 @@ module.exports = {
     host: process.env.DB_HOST,
     dialect: "postgres",
     logging: console.log,
+    dialectModule: require("pg"),
     dialectOptions: {
       ssl:
         process.env.DB_SSL === "true"
@@ -21,6 +22,7 @@ module.exports = {
   production: {
     use_env_variable: "DATABASE_URL",
     dialect: "postgres",
+    dialectModule: require("pg"),
     logging: false,
     dialectOptions: {
       ssl: {
