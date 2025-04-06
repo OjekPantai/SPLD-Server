@@ -4,27 +4,45 @@ const { sendResponse } = require("../utils/response");
 exports.createReport = async (req, res) => {
   try {
     const { title, content } = req.body;
+
     const report = await Report.create({
       title,
       content,
       userId: req.user.id,
     });
 
-    if (req.files) {
+    if (req.files && req.files.length > 0) {
       const media = await Promise.all(
-        req.files.map((file) =>
-          Media.create({
-            filePath: file.path,
+        req.files.map(async (file) => {
+          const fileName = `${Date.now()}-${file.originalname}`;
+
+          const { data, error } = await supabase.storage
+            .from("media")
+            .upload(fileName, file.buffer, {
+              contentType: file.mimetype,
+            });
+
+          if (error) {
+            console.error("Supabase Upload Error:", error.message);
+            throw new Error("Failed to upload file");
+          }
+
+          const fileUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${fileName}`;
+
+          return Media.create({
+            filePath: fileUrl,
             type: file.mimetype.startsWith("image") ? "foto" : "video",
             reportId: report.id,
-          })
-        )
+          });
+        })
       );
+
       report.dataValues.media = media;
     }
 
     sendResponse(res, 201, "Report created successfully", report);
   } catch (error) {
+    console.error("Error creating report:", error);
     sendResponse(res, 500, error.message);
   }
 };

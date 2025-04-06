@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { serveImage } = require("../controllers/mediaController");
+const { getImageUrl, upload } = require("../controllers/mediaController");
 
-router.get("/:filename", serveImage);
+router.post("/upload", upload.single("file"), uploadFile);
+router.get("/:filename", getImageUrl);
 
 module.exports = router;

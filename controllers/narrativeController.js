@@ -55,16 +55,32 @@ exports.createNarrative = async (req, res) => {
       reportId,
     });
 
-    if (req.files) {
+    if (req.files && req.files.length > 0) {
       const media = await Promise.all(
-        req.files.map((file) =>
-          Media.create({
-            filePath: file.path,
+        req.files.map(async (file) => {
+          const fileName = `${Date.now()}-${file.originalname}`;
+
+          const { data, error } = await supabase.storage
+            .from("media")
+            .upload(fileName, file.buffer, {
+              contentType: file.mimetype,
+            });
+
+          if (error) {
+            console.error("Supabase Upload Error:", error.message);
+            throw new Error("Failed to upload file");
+          }
+
+          const fileUrl = `${process.env.SUPABASE_URL}/storage/v1/object/public/media/${fileName}`;
+
+          return Media.create({
+            filePath: fileUrl, // Simpan URL file, bukan path lokal
             type: file.mimetype.startsWith("image") ? "foto" : "video",
             narrativeId: narrative.id,
-          })
-        )
+          });
+        })
       );
+
       narrative.dataValues.media = media;
     }
 

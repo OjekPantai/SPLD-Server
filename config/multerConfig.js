@@ -1,13 +1,5 @@
 const multer = require("multer");
-const { createClient } = require("@supabase/supabase-js");
 
-// Konfigurasi Supabase Client
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
-// Menggunakan memoryStorage agar file bisa langsung diunggah ke Supabase
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
@@ -23,9 +15,8 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, // Maksimal 50MB per file
-    files: 5, // Maksimal 5 file
+    fileSize: 50 * 1024 * 1024,
   },
 });
 
-module.exports = { upload };
+module.exports = upload;
