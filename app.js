@@ -15,7 +15,7 @@ const helmet = require("helmet");
 
 app.use(
   cors({
-    origin: "https://spld-magelang.vercel.app/",
+    origin: "https://spld-magelang.vercel.app",
     credentials: true,
   })
 );
